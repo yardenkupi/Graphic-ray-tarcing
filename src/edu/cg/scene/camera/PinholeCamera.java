@@ -3,7 +3,6 @@ package edu.cg.scene.camera;
 import edu.cg.UnimplementedMethodException;
 import edu.cg.algebra.Point;
 import edu.cg.algebra.Vec;
-import jdk.internal.vm.annotation.Hidden;
 
 public class PinholeCamera {
 	
@@ -56,7 +55,7 @@ public class PinholeCamera {
 		this.height = height;
 		this.width = width;
 		this.viewAngle = viewAngle;
-		long screenWidth = Math.tan(viewAngle/2.0) * this.distanceToPlain * 2; 
+		long screenWidth = (long) (Math.tan(viewAngle/2.0) * this.distanceToPlain * 2); 
 		this.pixelWidth = screenWidth / width;
 	}
 

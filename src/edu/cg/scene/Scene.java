@@ -185,26 +185,27 @@ public class Scene {
 		for	(Surface surface : surfaces) {
 			Hit hit = surface.intersect(ray);
 			if(hit != null){
-				if(hit.T < minHit.T && hit.T > 0){
+				if(hit.t < minHit.t && hit.t > 0){
 					closestSurface = surface;
 					minHit = hit;
 				}
 			}
 		}
-		color = closestSurface.Ka.mult(ambient);
+		color = closestSurface.Ka().mult(ambient);
 		
 		
 		for (Light light : lightSources) {
-			Ray RaytoLight = Light.RaytoLight(minHit);
+			Ray raytoLight = light.rayToLight(minHit.hitPoint);
 			
-			if(minHit.getNormalToSurface().dot(RaytoLight.direction()) > 0 && isExposed(light,closestSurface,RaytoLight)){
-				Vec Intensity = light.intensity(minHit.hitPoint, rayToLight);
-				Vec diffuse = closestSurface.Kd().mult(minHit.getNormalToSurface().dot(RaytoLight.direction)).mult(Intensity);
+			if(minHit.getNormalToSurface().dot(raytoLight.direction()) > 0 && isExposed(light,closestSurface,raytoLight)){
+				Vec Intensity = light.intensity(minHit.hitPoint, raytoLight);
+				Vec diffuse = closestSurface.Kd().mult(minHit.getNormalToSurface().dot(raytoLight.direction)).mult(Intensity);
 				color.add(diffuse);
 				Vec V = minHit.hitPoint.sub(ray.source());
-				Vec R = Ops.reflect(RaytoLight.direction().mult(-1),minHit.getNormalToSurface());
+				Vec R = Ops.reflect(raytoLight.direction().mult(-1),minHit.getNormalToSurface());
 				Vec specular = closestSurface.Ks().mult(Math.pow(V.dot(R),closestSurface.shininess())).mult(Intensity);
-				colar.add(specular);
+				color.add(specular);
+			}
 		}
 		
 		if(closestSurface == null){
@@ -212,10 +213,10 @@ public class Scene {
 		}
 
 		if(recusionLevel ==0){
-			return 
+			return color; //TODO
 		}
 		
-
+		return null;
 		
 	}
 	public boolean isExposed(Light light,Surface closestSurface,Ray rayToLight){
@@ -228,14 +229,17 @@ public class Scene {
 	}
 
 	public Hit closestSurface(Ray ray){
+		Hit minHit = null; //TODO should be initiarte
+		Surface closestSurface = null; //TODO should be initiarte
 		for	(Surface surface : surfaces) {
 			Hit hit = surface.intersect(ray);
 			if(hit != null){
-				if(hit.T < minHit.T && hit.T > 0){
+				if(hit.t < minHit.t && hit.t > 0){
 					closestSurface = surface;
 					minHit = hit;
 				}
 			}
 		}
+		return minHit; //TODO 
 	}
 }
