@@ -37,9 +37,9 @@ public class Sphere extends Shape {
 	}
 
 	@Override
-	public abstract boolean equals(Shape shape){
+	public boolean equals(Shape shape){
 		//TODO
-		return false
+		return false;
 	}
 
 	@Override

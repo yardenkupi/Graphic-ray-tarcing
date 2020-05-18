@@ -5,7 +5,6 @@ import edu.cg.algebra.Ops;
 import edu.cg.algebra.Point;
 import edu.cg.algebra.Ray;
 import edu.cg.algebra.Vec;
-import sun.net.www.content.text.plain;
 
 /** 
  * This class is already implemented and it represents a 3D plain. 
@@ -60,7 +59,7 @@ public class Plain extends Shape {
 
 	@Override
 	public boolean equals(Shape shape){
-		return(shape instanceof Plain && (plain)shape.a == this.a && (plain)shape.b == this.b && (plain)shape.c == this.c && (plain)shape.d == this.d);
+		return(shape instanceof Plain && ((Plain)shape).a == this.a && ((Plain)shape).b == this.b && ((Plain)shape).c == this.c && ((Plain)shape).d == this.d);
 	}
 
 	/**
@@ -88,9 +87,5 @@ public class Plain extends Shape {
 		return hit;
 	}
 	
-	@Override
-	public boolean equal(Intersectable intersectable){
-		
-	}
 
 }

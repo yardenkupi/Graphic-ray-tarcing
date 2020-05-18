@@ -31,4 +31,10 @@ public class Dome extends Shape {
 		// TODO: implement this method (bonus only).
 		throw new UnimplementedMethodException("intersect(Ray)");
 	}
+	
+	@Override
+	public boolean equals(Shape shape){
+		//TODO
+		return false;
+	}
 }
