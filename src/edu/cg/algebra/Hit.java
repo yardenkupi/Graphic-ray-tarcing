@@ -3,15 +3,20 @@ package edu.cg.algebra;
 import edu.cg.scene.objects.Surface;
 
 public class Hit implements Comparable<Hit> {
-	private final double t;
+	public final double t;
 	private final Vec normalToSurface;
-	
+
 	private boolean isWithin = false;
 	private Surface surface = null;
-	
+	public Point hitPoint = null;
+
 	public Hit(double t, Vec normalToSurface) {
 		this.t = t;
 		this.normalToSurface = normalToSurface;
+		
+	}
+	public void setHitPoint(Point hitPoint) {
+		this.hitPoint = hitPoint;
 	}
 
 	public Vec getNormalToSurface() {

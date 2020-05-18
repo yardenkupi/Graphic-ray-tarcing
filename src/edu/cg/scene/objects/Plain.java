@@ -5,6 +5,7 @@ import edu.cg.algebra.Ops;
 import edu.cg.algebra.Point;
 import edu.cg.algebra.Ray;
 import edu.cg.algebra.Vec;
+import sun.net.www.content.text.plain;
 
 /** 
  * This class is already implemented and it represents a 3D plain. 
@@ -56,6 +57,12 @@ public class Plain extends Shape {
 		return ray.direction().dot(normal()) < 0 ? normal() : normal().neg();
 	}
 
+
+	@Override
+	public boolean equals(Shape shape){
+		return(shape instanceof Plain && (plain)shape.a == this.a && (plain)shape.b == this.b && (plain)shape.c == this.c && (plain)shape.d == this.d);
+	}
+
 	/**
 	 * A helper method that calculates the values of ax+by+cz+d for a point (x,y,z).
 	 * This can be used to classify points with respect to the given plain.
@@ -76,6 +83,14 @@ public class Plain extends Shape {
 		Vec abc = new Vec(a, b, c);
 
 		double t = -substitute(ray.source()) / ray.direction().dot(abc);
-		return t > Ops.epsilon & t < Ops.infinity ? new Hit(t, normal(ray)) : null;
+		Hit hit = t > Ops.epsilon & t < Ops.infinity ? new Hit(t, normal(ray)) : null;
+		hit.setHitPoint(ray.add(hit.t)); 
+		return hit;
 	}
+	
+	@Override
+	public boolean equal(Intersectable intersectable){
+		
+	}
+
 }
