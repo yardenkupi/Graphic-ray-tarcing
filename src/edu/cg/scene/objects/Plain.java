@@ -60,7 +60,7 @@ public class Plain extends Shape {
 
 	@Override
 	public boolean equals(Shape shape){
-		return(shape instanceof Plain && (plain)shape.a == this.a && (plain)shape.b == this.b && (plain)shape.c == this.c && (plain)shape.d == this.d);
+		return(shape instanceof Plain && (Plain)shape.a == this.a && (Plain)shape.b == this.b && (Plain)shape.c == this.c && (Plain)shape.d == this.d);
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class Plain extends Shape {
 		hit.setHitPoint(ray.add(hit.t)); 
 		return hit;
 	}
-	
+
 	@Override
 	public boolean equal(Intersectable intersectable){
 		

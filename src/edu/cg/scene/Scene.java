@@ -205,15 +205,16 @@ public class Scene {
 				Vec R = Ops.reflect(RaytoLight.direction().mult(-1),minHit.getNormalToSurface());
 				Vec specular = closestSurface.Ks().mult(Math.pow(V.dot(R),closestSurface.shininess())).mult(Intensity);
 				colar.add(specular);
+			}
 		}
 		
-		if(closestSurface == null){
-			return backgroundColor;
-		}
+		// if(closestSurface == null){
+		// 	return backgroundColor;
+		// }
 
-		if(recusionLevel ==0){
-			return 
-		}
+		// if(recusionLevel ==0){
+		// 	return 
+		// }
 		
 
 		
