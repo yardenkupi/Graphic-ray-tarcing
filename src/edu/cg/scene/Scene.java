@@ -191,6 +191,9 @@ public class Scene {
 				}
 			}
 		}
+		if(closestSurface == null){
+			return backgroundColor;
+		}
 		color = closestSurface.Ka().mult(ambient);
 		
 		
@@ -208,9 +211,7 @@ public class Scene {
 			}
 		}
 		
-		if(closestSurface == null){
-			return backgroundColor;
-		}
+		
 
 		if(recusionLevel ==0){
 			return color; //TODO

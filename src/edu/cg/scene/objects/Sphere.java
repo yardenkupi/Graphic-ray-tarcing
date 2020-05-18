@@ -53,9 +53,9 @@ public class Sphere extends Shape {
 		double b = ray.direction().x * ray.source().x - (2 * this.center.x * ray.direction.x) +
 				ray.direction().y * ray.source().y - (2 * this.center.y * ray.direction.y) +
 				ray.direction().z * ray.source().z - (2 * this.center.z * ray.direction.z);
-		double c = Math.pow(ray.source().x,2) - (2 * this.center.x * ray.direction.x) + Math.pow(this.center.x,2) +
-				Math.pow(ray.source().y,2) - (2 * this.center.y * ray.direction.y) + Math.pow(this.center.y,2) +
-				Math.pow(ray.source().z,2) - (2 * this.center.z * ray.direction.z) + Math.pow(this.center.z,2) 
+		double c = Math.pow(ray.source().x,2) - (2 * this.center.x * ray.source().x) + Math.pow(this.center.x,2) +
+				Math.pow(ray.source().y,2) - (2 * this.center.y * ray.source().y) + Math.pow(this.center.y,2) +
+				Math.pow(ray.source().z,2) - (2 * this.center.z * ray.source().z) + Math.pow(this.center.z,2) 
 				- Math.pow(this.radius,2); 
 		
 		double determinant = b * b - 4 * a * c;
@@ -84,11 +84,11 @@ public class Sphere extends Shape {
 			hit = new Hit(t, hitPoint.sub(this.center).normalize());
 			hit.setHitPoint(hitPoint); 
 		}
-//		
-//		if(hit != null)
-//		{
-//			int i = 0;
-//		}
+		
+		if(hit != null)
+		{
+			int i = 0;
+		}
 
 		return hit;
 	}
