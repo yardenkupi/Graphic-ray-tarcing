@@ -35,7 +35,13 @@ public class Sphere extends Shape {
 		this.radius = radius;
 		return this;
 	}
-	
+
+	@Override
+	public abstract boolean equals(Shape shape){
+		//TODO
+		return false
+	}
+
 	@Override
 	public Hit intersect(Ray ray) {
 		//TODO: implement this method.

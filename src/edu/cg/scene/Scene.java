@@ -11,6 +11,8 @@ import java.util.concurrent.Future;
 
 import edu.cg.Logger;
 import edu.cg.UnimplementedMethodException;
+import edu.cg.algebra.Hit;
+import edu.cg.algebra.Ops;
 import edu.cg.algebra.Point;
 import edu.cg.algebra.Ray;
 import edu.cg.algebra.Vec;
@@ -117,6 +119,8 @@ public class Scene {
 	private void initSomeFields(int imgWidth, int imgHeight, Logger logger) {
 		this.logger = logger;
 		// TODO: initialize your additional field here.
+		
+		
 	}
 
 	public BufferedImage render(int imgWidth, int imgHeight, double viewAngle, Logger logger)
@@ -175,6 +179,63 @@ public class Scene {
 	private Vec calcColor(Ray ray, int recusionLevel) {
 		// TODO: Implement this method.
 		// This is the recursive method in RayTracing.
-		throw new UnimplementedMethodException("calcColor");
+		Vec color = new Vec(0,0,0);
+		Surface closestSurface = null;
+		Hit minHit = new Hit(Integer.MAX_VALUE,new Vec(0,0,0));
+		for	(Surface surface : surfaces) {
+			Hit hit = surface.intersect(ray);
+			if(hit != null){
+				if(hit.T < minHit.T && hit.T > 0){
+					closestSurface = surface;
+					minHit = hit;
+				}
+			}
+		}
+		color = closestSurface.Ka.mult(ambient);
+		
+		
+		for (Light light : lightSources) {
+			Ray RaytoLight = Light.RaytoLight(minHit);
+			
+			if(minHit.getNormalToSurface().dot(RaytoLight.direction()) > 0 && isExposed(light,closestSurface,RaytoLight)){
+				Vec Intensity = light.intensity(minHit.hitPoint, rayToLight);
+				Vec diffuse = closestSurface.Kd().mult(minHit.getNormalToSurface().dot(RaytoLight.direction)).mult(Intensity);
+				color.add(diffuse);
+				Vec V = minHit.hitPoint.sub(ray.source());
+				Vec R = Ops.reflect(RaytoLight.direction().mult(-1),minHit.getNormalToSurface());
+				Vec specular = closestSurface.Ks().mult(Math.pow(V.dot(R),closestSurface.shininess())).mult(Intensity);
+				colar.add(specular);
+		}
+		
+		if(closestSurface == null){
+			return backgroundColor;
+		}
+
+		if(recusionLevel ==0){
+			return 
+		}
+		
+
+		
+	}
+	public boolean isExposed(Light light,Surface closestSurface,Ray rayToLight){
+		for (Surface surface : surfaces) {
+			if(!surface.equals(closestSurface) && light.isOccludedBy(surface, rayToLight)){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public Hit closestSurface(Ray ray){
+		for	(Surface surface : surfaces) {
+			Hit hit = surface.intersect(ray);
+			if(hit != null){
+				if(hit.T < minHit.T && hit.T > 0){
+					closestSurface = surface;
+					minHit = hit;
+				}
+			}
+		}
 	}
 }

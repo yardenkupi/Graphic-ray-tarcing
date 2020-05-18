@@ -2,7 +2,7 @@ package edu.cg.algebra;
 
 public class Ray {
 	private final Point source;
-	private final Vec direction;
+	public final Vec direction;
 	
 	public Ray(Point source, Vec direction) {
 		this.source = source;

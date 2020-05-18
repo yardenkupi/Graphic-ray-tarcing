@@ -3,9 +3,22 @@ package edu.cg.scene.camera;
 import edu.cg.UnimplementedMethodException;
 import edu.cg.algebra.Point;
 import edu.cg.algebra.Vec;
+import jdk.internal.vm.annotation.Hidden;
 
 public class PinholeCamera {
-	// TODO Add your fields
+	
+	private Vec towardsVec;
+	private Vec upVec;
+	private Vec rightVec;
+	private Point cameraPosition;
+	private double distanceToPlain;
+
+	private Point Center;
+	public int height;
+	public int width;
+	private double viewAngle;
+	private long pixelWidth;
+	
 
 	/**
 	 * Initializes a pinhole camera model with default resolution 200X200 (RxXRy)
@@ -20,7 +33,15 @@ public class PinholeCamera {
 	 * 
 	 */
 	public PinholeCamera(Point cameraPosition, Vec towardsVec, Vec upVec, double distanceToPlain) {
-		// TODO: Initialize your fields
+		this.towardsVec = towardsVec.normalize();
+		this.cameraPosition = cameraPosition;
+		this.rightVec = upVec.cross(towardsVec).normalize();
+
+		this.upVec = rightVec.cross(towardsVec).normalize();
+		this.distanceToPlain = distanceToPlain;
+		
+		this.Center = cameraPosition.add(this.towardsVec.mult(distanceToPlain));
+		
 	}
 
 	/**
@@ -31,7 +52,12 @@ public class PinholeCamera {
 	 * @param viewAngle - the view Angle.
 	 */
 	public void initResolution(int height, int width, double viewAngle) {
-		// TODO: init your fields
+		
+		this.height = height;
+		this.width = width;
+		this.viewAngle = viewAngle;
+		long screenWidth = Math.tan(viewAngle/2.0) * this.distanceToPlain * 2; 
+		this.pixelWidth = screenWidth / width;
 	}
 
 	/**
@@ -43,8 +69,8 @@ public class PinholeCamera {
 	 * @return the middle point of the pixel (x,y) in the model coordinates.
 	 */
 	public Point transform(int x, int y) {
-		// TODO: implement this method.
-		throw new UnimplementedMethodException("PinholeCamera.transform is not implemented.");
+		Point P = this.Center.add(rightVec.mult(x - Math.floor(width/2)*pixelWidth)).add(upVec.mult(-y + Math.floor(height/2)*pixelWidth));
+		return P;
 	}
 
 	/**
@@ -53,7 +79,6 @@ public class PinholeCamera {
 	 * @return a new point representing the camera position.
 	 */
 	public Point getCameraPosition() {
-		// TODO: implement this method.
-		throw new UnimplementedMethodException("PinholeCamera.getCameraPosition");
+		return cameraPosition;
 	}
 }

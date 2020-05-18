@@ -15,4 +15,5 @@ public interface Intersectable {
 	 * @return The hit point of the ray with the object if exist and null otherwise. 
 	 */
 	public Hit intersect(Ray ray);
+	
 }
