@@ -2,8 +2,10 @@ package edu.cg.scene.objects;
 
 import edu.cg.UnimplementedMethodException;
 import edu.cg.algebra.Hit;
+import edu.cg.algebra.Ops;
 import edu.cg.algebra.Point;
 import edu.cg.algebra.Ray;
+import edu.cg.algebra.Vec;
 
 public class Sphere extends Shape {
 	private Point center;
@@ -38,13 +40,56 @@ public class Sphere extends Shape {
 
 	@Override
 	public boolean equals(Shape shape){
-		//TODO
-		return false;
+		Point center = ((Sphere)shape).center;
+		return(shape instanceof Sphere && ((Sphere)shape).radius == this.radius && center.equals(this.center));
 	}
 
 	@Override
 	public Hit intersect(Ray ray) {
-		//TODO: implement this method.
-		throw new UnimplementedMethodException("intersect(Ray)");
+		Hit hit = null;
+		double t1, t2;
+		double t = 0;
+		double a = Math.pow(ray.direction().x,2) + Math.pow(ray.direction().y,2) + Math.pow(ray.direction().z,2);
+		double b = ray.direction().x * ray.source().x - (2 * this.center.x * ray.direction.x) +
+				ray.direction().y * ray.source().y - (2 * this.center.y * ray.direction.y) +
+				ray.direction().z * ray.source().z - (2 * this.center.z * ray.direction.z);
+		double c = Math.pow(ray.source().x,2) - (2 * this.center.x * ray.direction.x) + Math.pow(this.center.x,2) +
+				Math.pow(ray.source().y,2) - (2 * this.center.y * ray.direction.y) + Math.pow(this.center.y,2) +
+				Math.pow(ray.source().z,2) - (2 * this.center.z * ray.direction.z) + Math.pow(this.center.z,2) 
+				- Math.pow(this.radius,2); 
+		
+		double determinant = b * b - 4 * a * c;
+		
+		if(determinant > 0) {
+            t1 = (-b + Math.sqrt(determinant)) / (2 * a);
+            t2 = (-b - Math.sqrt(determinant)) / (2 * a);
+            
+            if(t1 < t2 && t1 > Ops.epsilon)
+            {
+            	t = t1;
+            }
+            if(t2 < t1 && t2 > Ops.epsilon)
+            {
+            	t = t2;
+            }
+        }
+        // Condition for real and equal roots
+        else if(determinant == 0) {
+            t = -b / (2 * a);
+        }
+		
+		if(t != 0)
+		{
+			Point hitPoint = ray.add(hit.t);
+			hit = new Hit(t, hitPoint.sub(this.center).normalize());
+			hit.setHitPoint(hitPoint); 
+		}
+//		
+//		if(hit != null)
+//		{
+//			int i = 0;
+//		}
+
+		return hit;
 	}
 }
