@@ -25,7 +25,12 @@ public class Dome extends Shape {
 		String endl = System.lineSeparator();
 		return "Dome:" + endl + sphere + plain + endl;
 	}
-
+	@Override
+	
+	public boolean equals(Shape shape){
+		//TODO
+		return false;
+	}
 	@Override
 	public Hit intersect(Ray ray) {
 		// TODO: implement this method (bonus only).
