@@ -50,20 +50,20 @@ public class Sphere extends Shape {
 		double t1, t2;
 		double t = 0;
 		double a = Math.pow(ray.direction().x,2) + Math.pow(ray.direction().y,2) + Math.pow(ray.direction().z,2);
-		double b = (2 * ray.direction().x * ray.source().x) - (2 * this.center.x * ray.direction.x) +
-				(2 * ray.direction().y * ray.source().y )- (2 * this.center.y * ray.direction.y) +
-				(2 * ray.direction().z * ray.source().z) - (2 * this.center.z * ray.direction.z);
-		double c = Math.pow(ray.source().x,2) - (2 * this.center.x * ray.source().x) + Math.pow(this.center.x,2) +
-				Math.pow(ray.source().y,2) - (2 * this.center.y * ray.source().y) + Math.pow(this.center.y,2) +
-				Math.pow(ray.source().z,2) - (2 * this.center.z * ray.source().z) + Math.pow(this.center.z,2) 
-				- Math.pow(this.radius,2); 
-		
+		double b = (2 * ray.direction().x * ray.source().x) - (2.0 * this.center.x * ray.direction.x) +
+				(2 * ray.direction().y * ray.source().y )- (2.0 * this.center.y * ray.direction.y) +
+				(2 * ray.direction().z * ray.source().z) - (2.0 * this.center.z * ray.direction.z);
+		double c = Math.pow(ray.source().x,2) - (2.0 * this.center.x * ray.source().x) + Math.pow(this.center.x,2) +
+				Math.pow(ray.source().y,2) - (2.0 * this.center.y * ray.source().y) + Math.pow(this.center.y,2) +
+				Math.pow(ray.source().z,2) - (2.0 * this.center.z * ray.source().z) + Math.pow(this.center.z,2)
+				- Math.pow(this.radius,2);
+
 		double determinant = b * b - 4 * a * c;
-		
+
 		if(determinant > 0) {
-            t1 = (-b + Math.sqrt(determinant)) / (2 * a);
-            t2 = (-b - Math.sqrt(determinant)) / (2 * a);
-            
+            t1 = (-b + Math.sqrt(determinant)) / (2.0 * a);
+            t2 = (-b - Math.sqrt(determinant)) / (2.0 * a);
+
             if(t1 < t2 && t1 > Ops.epsilon)
             {
             	t = t1;
@@ -75,20 +75,17 @@ public class Sphere extends Shape {
         }
         // Condition for real and equal roots
         else if(determinant == 0) {
-            t = -b / (2 * a);
+            t = -b / (2.0 * a);
         }
-		
+
 		if(t != 0)
 		{
 			Point hitPoint = ray.add(t);
 			hit = new Hit(t, hitPoint.sub(this.center).normalize());
-			hit.setHitPoint(hitPoint); 
+			hit.setHitPoint(hitPoint);
 		}
-		
-		if(hit != null)
-		{
-			int i = 0;
-		}
+
+
 
 		return hit;
 	}
