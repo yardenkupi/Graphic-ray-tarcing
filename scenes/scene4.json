@@ -100,24 +100,24 @@
       },
       "material": {
         "Ka": {
-          "x": 0.1,
-          "y": 0.1,
-          "z": 0.1
+          "x": 0.32437458181709056,
+          "y": 0.14586162126788443,
+          "z": 0.2236515648926492
         },
         "Kd": {
-          "x": 0.1,
-          "y": 0.1,
-          "z": 0.1
+          "x": 0.6487491636341811,
+          "y": 0.29172324253576887,
+          "z": 0.4473031297852984
         },
         "Ks": {
-          "x": 0.1,
-          "y": 0.1,
-          "z": 0.1
+          "x": 0.2973549403776101,
+          "y": 0.2973549403776101,
+          "z": 0.2973549403776101
         },
-        "reflectionIntensity": 0.8,
-        "shininess": 2,
-        "isTransparent": true,
-        "refractionIntensity": 0.2,
+        "reflectionIntensity": 0.0,
+        "shininess": 10,
+        "isTransparent": false,
+        "refractionIntensity": 0.3,
         "refractionIndex": 1.5
       }
     },
@@ -148,24 +148,24 @@
       },
       "material": {
         "Ka": {
-          "x": 0.1,
-          "y": 0.1,
-          "z": 0.1
+          "x": 0.32437458181709056,
+          "y": 0.14586162126788443,
+          "z": 0.2236515648926492
         },
         "Kd": {
-          "x": 0.1,
-          "y": 0.1,
-          "z": 0.1
+          "x": 0.6487491636341811,
+          "y": 0.29172324253576887,
+          "z": 0.4473031297852984
         },
         "Ks": {
-          "x": 0.1,
-          "y": 0.1,
-          "z": 0.1
+          "x": 0.2973549403776101,
+          "y": 0.2973549403776101,
+          "z": 0.2973549403776101
         },
-        "reflectionIntensity": 0.8,
-        "shininess": 2,
-        "isTransparent": true,
-        "refractionIntensity": 0.2,
+        "reflectionIntensity": 0.0,
+        "shininess": 10,
+        "isTransparent": false,
+        "refractionIntensity": 0.3,
         "refractionIndex": 1.5
       }
     }

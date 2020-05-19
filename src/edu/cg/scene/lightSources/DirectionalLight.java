@@ -38,7 +38,7 @@ public class DirectionalLight extends Light {
 	@Override
 	public boolean isOccludedBy(Surface surface, Ray rayToLight) {
 		Hit hit = surface.intersect(rayToLight);
-		return(!((hit!=null) && (hit.t > 0)));
+		return(((hit != null) && (hit.t > 0)));
 	}
 
 	@Override
