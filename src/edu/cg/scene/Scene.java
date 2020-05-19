@@ -174,8 +174,19 @@ public class Scene {
 			// super-sampling. You're also free to change the given implementation if you
 			// want.
 			Point centerPoint = camera.transform(x, y);
+			
 			Ray ray = new Ray(camera.getCameraPosition(), centerPoint);
 			Vec color = calcColor(ray, 0);
+			if(color.x != 0.0)
+			{
+				System.out.print("Hit: (" + x + ","+ y + ")");
+				System.out.println(" ");
+			}
+			if(x%100 == 0 && y%100 == 0)
+			{
+				System.out.print("(" + x + ","+ y + ")");
+				System.out.println(" ");
+			}
 			return color.toColor();
 		});
 	}
@@ -187,8 +198,8 @@ public class Scene {
 		Hit minHit = new Hit(Integer.MAX_VALUE,new Vec(0,0,0));
 
 		//check which is the closest surface to be hit
-		for	(Surface surface : surfaces) {
 
+		for	(Surface surface : surfaces) {
 				Hit hit = surface.intersect(ray);
 				if (hit != null) {
 					if (hit.compareTo(minHit)< 0 && hit.t > 0) {

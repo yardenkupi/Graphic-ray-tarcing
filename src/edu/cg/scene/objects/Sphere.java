@@ -82,11 +82,9 @@ public class Sphere extends Shape {
 		{
 			Point hitPoint = ray.add(t);
 			hit = new Hit(t, hitPoint.sub(this.center).normalize());
-			hit.setHitPoint(hitPoint);
+			hit.setHitPoint(hitPoint); 
 		}
-
-
-
-		return hit;
+		
+    return hit;
 	}
 }
