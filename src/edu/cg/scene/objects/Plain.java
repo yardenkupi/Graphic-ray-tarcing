@@ -83,7 +83,8 @@ public class Plain extends Shape {
 
 		double t = -substitute(ray.source()) / ray.direction().dot(abc);
 		Hit hit = t > Ops.epsilon & t < Ops.infinity ? new Hit(t, normal(ray)) : null;
-		hit.setHitPoint(ray.add(hit.t)); 
+		if(hit != null)
+			hit.setHitPoint(ray.add(hit.t)); 
 		return hit;
 	}
 	
