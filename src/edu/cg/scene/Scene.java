@@ -133,7 +133,7 @@ public class Scene {
 
 		BufferedImage img = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_RGB);
 		camera.initResolution(imgHeight, imgWidth, viewAngle);
-		int nThreads = Runtime.getRuntime().availableProcessors();
+		int nThreads =  1; // Runtime.getRuntime().availableProcessors();
 		nThreads = nThreads < 2 ? 2 : nThreads;
 		this.logger.log("Intitialize executor. Using " + nThreads + " threads to render " + name);
 		executor = Executors.newFixedThreadPool(nThreads);
@@ -263,8 +263,9 @@ public class Scene {
 	}
 
 	public Hit closestSurface(Ray ray){
-		Hit minHit = null; //TODO should be initiarte
-		Surface closestSurface = null; //TODO should be initiarte
+		//TODO
+		Hit minHit = null; 
+		Surface closestSurface = null; 
 		for	(Surface surface : surfaces) {
 			Hit hit = surface.intersect(ray);
 			if(hit != null){
@@ -274,6 +275,6 @@ public class Scene {
 				}
 			}
 		}
-		return minHit; //TODO 
+		return minHit;
 	}
 }
