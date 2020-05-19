@@ -35,8 +35,8 @@ public class PinholeCamera {
 		this.towardsVec = towardsVec.normalize();
 		this.cameraPosition = cameraPosition;
 
-		this.rightVec = upVec.cross(towardsVec).normalize();
-		this.upVec = rightVec.cross(towardsVec).normalize();
+		this.rightVec = (towardsVec.cross(upVec)).normalize();
+		this.upVec = (this.rightVec.cross(towardsVec)).normalize();
 		this.distanceToPlain = distanceToPlain;
 		this.Center = cameraPosition.add(this.towardsVec.mult(distanceToPlain));
 	}
@@ -53,10 +53,10 @@ public class PinholeCamera {
 		this.height = height;
 		this.width = width;
 		this.viewAngle = viewAngle;
+		long screenWidth = (long) (Math.tan(viewAngle/2.0) * this.distanceToPlain * 2.0);
 		double Height = (double)height;
 		double Screenwidth = (double)screenWidth;
-		this.pixelWidth = (long)((double)(screenWidth) / (double)(width));
-
+        this.pixelWidth = Screenwidth / Height;
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class PinholeCamera {
 	 * @return the middle point of the pixel (x,y) in the model coordinates.
 	 */
 	public Point transform(int x, int y) {
-		Point P = this.Center.add(rightVec.mult(x - Math.floor(width/2.0)*pixelWidth)).add(upVec.mult(-y + Math.floor(height/2.0)*pixelWidth));
+		Point P = this.Center.add(rightVec.mult((x - Math.floor(width/2.0))*pixelWidth)).add(upVec.mult(((0.0 - y) + Math.floor(height/2.0))*pixelWidth));
 		return P;
 	}
 
