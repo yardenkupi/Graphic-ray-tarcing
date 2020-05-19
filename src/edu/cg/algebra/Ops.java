@@ -109,6 +109,7 @@ public class Ops {
 	public static Vec refract(Vec u, Vec normal, double n1, double n2) {
 		// TODO: Bonus implementation. 
 		// Snell's law: n1*sin(theta1) = n2*sin(theta2)
-		throw new UnimplementedMethodException("Ops.refract(Vec, Vec, double, double)");
+		double theta1 =
+		return v2;
 	}
 }

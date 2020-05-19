@@ -170,23 +170,21 @@ public class Scene {
 
 	private Future<Color> calcColor(int x, int y) {
 		return executor.submit(() -> {
-			// TODO: You need to re-implement this method if you want to handle
-			// super-sampling. You're also free to change the given implementation if you
-			// want.
+
 			Point centerPoint = camera.transform(x, y);
 			
 			Ray ray = new Ray(camera.getCameraPosition(), centerPoint);
 			Vec color = calcColor(ray, 0);
-			if(color.x != 0.0)
-			{
-//				System.out.print("Hit: (" + x + ","+ y + ")");
-//				System.out.println(" ");
-			}
-			if(x%100 == 0 && y%100 == 0)
-			{
-//				System.out.print("(" + x + ","+ y + ")");
-//				System.out.println(" ");
-			}
+//			if(color.x != 0.0)
+//			{
+////				System.out.print("Hit: (" + x + ","+ y + ")");
+////				System.out.println(" ");
+//			}
+//			if(x%100 == 0 && y%100 == 0)
+//			{
+////				System.out.print("(" + x + ","+ y + ")");
+////				System.out.println(" ");
+//			}
 			return color.toColor();
 		});
 	}
@@ -212,12 +210,12 @@ public class Scene {
 		if(closestSurface == null){
 			return backgroundColor;
 		}
+		int check = 0;
 		color = closestSurface.Ka().mult(ambient);
 		
 		//for loop over light sources to check if they hit chosen surface and calc ray tracing
 		for (Light light : lightSources) {
 			Ray raytoLight = light.rayToLight(minHit.hitPoint);
-			
 			if(minHit.getNormalToSurface().dot(raytoLight.direction()) > 0 && isExposed(light,closestSurface,raytoLight)){
 				Vec Intensity = light.intensity(minHit.hitPoint, raytoLight);
 				Vec diffuse = closestSurface.Kd().mult(minHit.getNormalToSurface().dot(raytoLight.direction)).mult(Intensity);
@@ -257,14 +255,16 @@ public class Scene {
 		for (Surface surface : surfaces) {
 			if(light.isOccludedBy(surface, rayToLight)){
 				return false;
+			}else{
+				int x = 9;
 			}
 		}
 		return true;
 	}
 
 	public Hit closestSurface(Ray ray){
-		Hit minHit = null; //TODO should be initiarte
-		Surface closestSurface = null; //TODO should be initiarte
+		Hit minHit = null;
+		Surface closestSurface = null;
 		for	(Surface surface : surfaces) {
 			Hit hit = surface.intersect(ray);
 			if(hit != null){
