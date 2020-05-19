@@ -47,6 +47,7 @@ public class Scene {
 
 	public Scene initBackgroundColor(Vec backgroundColor) {
 		this.backgroundColor = backgroundColor;
+		this.backgroundColor = backgroundColor;
 		return this;
 	}
 
@@ -191,28 +192,25 @@ public class Scene {
 	}
 
 	private Vec calcColor(Ray ray, int recusionLevel) {
-		// TODO: Implement this method.
 		// This is the recursive method in RayTracing.
 		Vec color = new Vec(0,0,0);
 		Surface closestSurface = null;
 		Hit minHit = new Hit(Integer.MAX_VALUE,new Vec(0,0,0));
 
 		//check which is the closest surface to be hit
-		for	(Surface surface : this.surfaces) {
-			if(!surface.isTransparent()) {
+
+		for	(Surface surface : surfaces) {
 				Hit hit = surface.intersect(ray);
 				if (hit != null) {
-					if (hit.t < minHit.t && hit.t > 0) {
+					if (hit.compareTo(minHit)< 0 && hit.t > 0) {
 						closestSurface = surface;
 						minHit = hit;
 					}
 				}
-			}
 		}
 
 		if(closestSurface == null){
 			return backgroundColor;
-
 		}
 		color = closestSurface.Ka().mult(ambient);
 		
@@ -230,7 +228,14 @@ public class Scene {
 				color = color.add(specular);
 			}
 		}
-		
+
+		if(color.x > 1){
+			color.x = 1;
+		}else if(color.y > 1){
+			color.y = 1;
+		}else if(color.z > 1){
+			color.z = 1;
+		}
 
 		//base case
 		if(recusionLevel ==0){
@@ -250,7 +255,7 @@ public class Scene {
 	}
 	public boolean isExposed(Light light,Surface closestSurface,Ray rayToLight){
 		for (Surface surface : surfaces) {
-			if(!surface.equals(closestSurface) && light.isOccludedBy(surface, rayToLight)){
+			if(light.isOccludedBy(surface, rayToLight)){
 				return false;
 			}
 		}
