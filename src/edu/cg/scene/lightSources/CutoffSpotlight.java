@@ -1,6 +1,7 @@
 package edu.cg.scene.lightSources;
 
 import edu.cg.UnimplementedMethodException;
+import edu.cg.algebra.Hit;
 import edu.cg.algebra.Ops;
 import edu.cg.algebra.Point;
 import edu.cg.algebra.Ray;
@@ -49,13 +50,16 @@ public class CutoffSpotlight extends PointLight {
 
 	@Override
 	public boolean isOccludedBy(Surface surface, Ray rayToLight) {
-		// TODO: implement this method.
-		throw new UnimplementedMethodException("CutoffSpotlight.isOccludedBy is not implemented.");
+		return super.isOccludedBy(surface,rayToLight);
 	}
 
 	@Override
 	public Vec intensity(Point hittingPoint, Ray rayToLight) {
-		// TODO: implement this method.
-		throw new UnimplementedMethodException("CutoffSpotlight.intensity is not implemented.");
+		
+		if(rayToLight.direction.dot(this.direction.mult(-1)) > this.cutoffAngle)
+		{
+			return new Vec(0,0,0);
+		}
+		return super.intensity(hittingPoint, rayToLight).mult(rayToLight.direction.dot(this.direction.mult(-1)));
 	}
 }

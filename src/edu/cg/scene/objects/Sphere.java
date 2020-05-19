@@ -9,7 +9,7 @@ import edu.cg.algebra.Vec;
 
 public class Sphere extends Shape {
 	private Point center;
-	private double radius;
+	double radius;
 	
 	public Sphere(Point center, double radius) {
 		this.center = center;
@@ -85,6 +85,6 @@ public class Sphere extends Shape {
 			hit.setHitPoint(hitPoint); 
 		}
 		
-    return hit;
+		return hit;
 	}
 }

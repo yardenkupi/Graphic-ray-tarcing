@@ -179,13 +179,13 @@ public class Scene {
 			Vec color = calcColor(ray, 0);
 			if(color.x != 0.0)
 			{
-				System.out.print("Hit: (" + x + ","+ y + ")");
-				System.out.println(" ");
+//				System.out.print("Hit: (" + x + ","+ y + ")");
+//				System.out.println(" ");
 			}
 			if(x%100 == 0 && y%100 == 0)
 			{
-				System.out.print("(" + x + ","+ y + ")");
-				System.out.println(" ");
+//				System.out.print("(" + x + ","+ y + ")");
+//				System.out.println(" ");
 			}
 			return color.toColor();
 		});
