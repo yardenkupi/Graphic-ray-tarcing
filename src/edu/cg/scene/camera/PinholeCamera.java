@@ -56,7 +56,7 @@ public class PinholeCamera {
 		this.width = width;
 		this.viewAngle = viewAngle;
 		long screenWidth = (long) (Math.tan(viewAngle/2.0) * this.distanceToPlain * 2); 
-		this.pixelWidth = screenWidth / width;
+		this.pixelWidth = (long)((double)(screenWidth) / (double)(width));
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class PinholeCamera {
 	 * @return the middle point of the pixel (x,y) in the model coordinates.
 	 */
 	public Point transform(int x, int y) {
-		Point P = this.Center.add(rightVec.mult(x - Math.floor(width/2)*pixelWidth)).add(upVec.mult(-y + Math.floor(height/2)*pixelWidth));
+		Point P = this.Center.add(rightVec.mult(x - Math.floor(width/2)*pixelWidth)).add(upVec.mult(0 - y + Math.floor(height/2)*pixelWidth));
 		return P;
 	}
 

@@ -85,7 +85,8 @@ public class Sphere extends Shape {
 			hit.setHitPoint(hitPoint); 
 		}
 		
-		if(hit != null)
+		
+		else
 		{
 			int i = 0;
 		}
