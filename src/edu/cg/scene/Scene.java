@@ -33,6 +33,7 @@ public class Scene {
 	private List<Light> lightSources = new LinkedList<>();
 	private List<Surface> surfaces = new LinkedList<>();
 
+	private transient static int count = 0;
 	// MARK: initializers
 	public Scene initCamera(Point eyePoistion, Vec towardsVec, Vec upVec, double distanceToPlain) {
 		this.camera = new PinholeCamera(eyePoistion, towardsVec, upVec, distanceToPlain);
@@ -119,6 +120,7 @@ public class Scene {
 	private void initSomeFields(int imgWidth, int imgHeight, Logger logger) {
 		this.logger = logger;
 		// TODO: initialize your additional field here.
+		//DONT FORGET TO ADD THEM AS: private transient Object aField
 		
 		
 	}
@@ -144,6 +146,7 @@ public class Scene {
 		for (int y = 0; y < imgHeight; ++y)
 			for (int x = 0; x < imgWidth; ++x)
 				futures[y][x] = calcColor(x, y);
+		System.out.println(count);
 
 		this.logger.log("Done shooting rays.");
 		this.logger.log("Wating for results...");
@@ -182,41 +185,55 @@ public class Scene {
 		Vec color = new Vec(0,0,0);
 		Surface closestSurface = null;
 		Hit minHit = new Hit(Integer.MAX_VALUE,new Vec(0,0,0));
+
+		//check which is the closest surface to be hit
 		for	(Surface surface : surfaces) {
-			Hit hit = surface.intersect(ray);
-			if(hit != null){
-				if(hit.t < minHit.t && hit.t > 0){
-					closestSurface = surface;
-					minHit = hit;
+			if(!surface.isTransparent()) {
+				Hit hit = surface.intersect(ray);
+				if (hit != null) {
+					if (hit.t < minHit.t && hit.t > 0) {
+						closestSurface = surface;
+						minHit = hit;
+					}
 				}
 			}
 		}
+
 		if(closestSurface == null){
 			return backgroundColor;
+
 		}
 		color = closestSurface.Ka().mult(ambient);
 		
-		
+		//for loop over light sources to check if they hit chosen surface and calc ray tracing
 		for (Light light : lightSources) {
 			Ray raytoLight = light.rayToLight(minHit.hitPoint);
 			
 			if(minHit.getNormalToSurface().dot(raytoLight.direction()) > 0 && isExposed(light,closestSurface,raytoLight)){
 				Vec Intensity = light.intensity(minHit.hitPoint, raytoLight);
 				Vec diffuse = closestSurface.Kd().mult(minHit.getNormalToSurface().dot(raytoLight.direction)).mult(Intensity);
-				color.add(diffuse);
-				Vec V = minHit.hitPoint.sub(ray.source());
-				Vec R = Ops.reflect(raytoLight.direction().mult(-1),minHit.getNormalToSurface());
+				color = color.add(diffuse);
+				Vec V = minHit.hitPoint.sub(ray.source()).normalize();
+				Vec R = Ops.reflect(raytoLight.direction().mult(-1),minHit.getNormalToSurface()).normalize();
 				Vec specular = closestSurface.Ks().mult(Math.pow(V.dot(R),closestSurface.shininess())).mult(Intensity);
-				color.add(specular);
+				color = color.add(specular);
 			}
 		}
 		
-		
 
+		//base case
 		if(recusionLevel ==0){
-			return color; //TODO
+			count++;
+			return color;
 		}
-		
+
+		//recursive call
+		if(closestSurface.reflectionIntensity() != 0){
+			Ray reflectanceRay = new Ray(minHit.hitPoint,Ops.reflect(ray.direction(),minHit.getNormalToSurface()).normalize());
+			return calcColor(reflectanceRay,recusionLevel-1);
+		}else{
+			//TODO (refractions)
+		}
 		return null;
 		
 	}
