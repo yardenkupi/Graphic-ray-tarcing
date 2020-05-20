@@ -38,6 +38,10 @@ public class Dome extends Shape {
 		{
 			return null;
 		}
+		if(planeHit == null)
+		{
+			return sphareHit;
+		}
 		//check if hit the surface from the dome side, if so return the sphare hit, else the spare.
 		return planeHit.getNormalToSurface().dot(plain.normal()) >= 0 ? sphareHit : planeHit;
 	}

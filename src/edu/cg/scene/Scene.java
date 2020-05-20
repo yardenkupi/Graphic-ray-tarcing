@@ -128,7 +128,7 @@ public class Scene {
 
 	public BufferedImage render(int imgWidth, int imgHeight, double viewAngle, Logger logger)
 			throws InterruptedException, ExecutionException, IllegalArgumentException {
-
+		count = 0;
 		initSomeFields(imgWidth, imgHeight, logger);
 
 		BufferedImage img = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_RGB);
@@ -202,6 +202,10 @@ public class Scene {
 		for	(Surface surface : surfaces) {
 				Hit hit = surface.intersect(ray);
 				if (hit != null) {
+					if(count == 4196)
+					{
+						int i = 0;
+					}
 					if (hit.compareTo(minHit)< 0 && hit.t > 0) {
 						closestSurface = surface;
 						minHit = hit;
@@ -240,6 +244,7 @@ public class Scene {
 		//base case
 		if(recusionLevel ==0){
 			count++;
+			System.out.println(count);
 			return color;
 		}
 

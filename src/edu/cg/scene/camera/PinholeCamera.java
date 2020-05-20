@@ -50,8 +50,8 @@ public class PinholeCamera {
 	 */
 	public void initResolution(int height, int width, double viewAngle) {
 		
-		this.height = height;
-		this.width = width;
+		this.height = (double)height;
+		this.width = (double)width;
 		this.viewAngle = viewAngle;
 		double screenWidth = (double) (Math.tan(viewAngle/2.0) * this.distanceToPlain * 2.0);
 		double Width = (double)width;
