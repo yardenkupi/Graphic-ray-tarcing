@@ -56,7 +56,7 @@ public class CutoffSpotlight extends PointLight {
 	@Override
 	public Vec intensity(Point hittingPoint, Ray rayToLight) {
 		
-		if(rayToLight.direction.dot(this.direction.mult(-1)) > this.cutoffAngle)
+		if(Math.acos(rayToLight.direction.dot(this.direction.mult(-1))) > this.cutoffAngle)
 		{
 			return new Vec(0,0,0);
 		}
