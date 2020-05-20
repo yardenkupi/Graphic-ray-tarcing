@@ -190,73 +190,102 @@ public class Scene {
 	}
 
 	private Vec calcColor(Ray ray, int recusionLevel) {
-		// This is the recursive method in RayTracing.
-		Vec color = new Vec(0,0,0);
-		Surface closestSurface = null;
-		Hit minHit = new Hit(Integer.MAX_VALUE,new Vec(0,0,0));
+        // This is the recursive method in RayTracing.
+        Vec color = new Vec(0, 0, 0);
+        Surface closestSurface = null;
+        Hit minHit = new Hit(Integer.MAX_VALUE, new Vec(0, 0, 0));
 
-		//check which is the closest surface to be hit
+        //check which is the closest surface to be hit
 
-		for	(Surface surface : surfaces) {
-				Hit hit = surface.intersect(ray);
-				if (hit != null) {
-					if(count == 4196)
-					{
-						int i = 0;
-					}
-					if (hit.compareTo(minHit)< 0 && hit.t > 0) {
-						closestSurface = surface;
-						minHit = hit;
-					}
-				}
-		}
+        for (Surface surface : surfaces) {
+            Hit hit = surface.intersect(ray);
+            if (hit != null) {
+                if (count == 4196) {
+                    int i = 0;
+                }
+                if (hit.compareTo(minHit) < 0 && hit.t > 0) {
+                    closestSurface = surface;
+                    minHit = hit;
+                }
+            }
+        }
 
-		if(closestSurface == null){
-			return backgroundColor;
-		}
-		int check = 0;
-		color = closestSurface.Ka().mult(ambient);
-		
-		//for loop over light sources to check if they hit chosen surface and calc ray tracing
-		for (Light light : lightSources) {
-			Ray raytoLight = light.rayToLight(minHit.hitPoint);
-			if(minHit.getNormalToSurface().dot(raytoLight.direction()) > 0 && isExposed(light,closestSurface,raytoLight)){
-				Vec Intensity = light.intensity(minHit.hitPoint, raytoLight);
-				Vec diffuse = closestSurface.Kd().mult(minHit.getNormalToSurface().dot(raytoLight.direction)).mult(Intensity);
-				color = color.add(diffuse);
-				Vec V = minHit.hitPoint.sub(ray.source()).normalize();
-				Vec R = Ops.reflect(Ops.neg( raytoLight.direction()),minHit.getNormalToSurface()).normalize();
-				Vec specular = closestSurface.Ks().mult(Math.pow(V.dot(R),closestSurface.shininess())).mult(Intensity);
-				color = color.add(specular);
-			}
-		}
+        if (closestSurface == null) {
+            return backgroundColor;
+        }
 
-		if(color.x > 1){
-			color.x = 1;
-		}else if(color.y > 1){
-			color.y = 1;
-		}else if(color.z > 1){
-			color.z = 1;
-		}
+        color = closestSurface.Ka().mult(ambient);
 
-		//base case
-		if(recusionLevel ==0){
-			count++;
-			System.out.println(count);
-			return color;
-		}
+        //for loop over light sources to check if they hit chosen surface and calc ray tracing
+        for (Light light : lightSources) {
+            Ray raytoLight = light.rayToLight(minHit.hitPoint);
+            if (minHit.getNormalToSurface().dot(raytoLight.direction()) > 0 && isExposed(light, closestSurface, raytoLight)) {
+                Vec Intensity = light.intensity(minHit.hitPoint, raytoLight);
+                Vec diffuse = closestSurface.Kd().mult(minHit.getNormalToSurface().dot(raytoLight.direction)).mult(Intensity);
+                color = color.add(diffuse);
+                Vec V = minHit.hitPoint.sub(ray.source()).normalize();
+                Vec R = Ops.reflect(Ops.neg(raytoLight.direction()), minHit.getNormalToSurface()).normalize();
+                Vec specular = closestSurface.Ks().mult(Math.pow(V.dot(R), closestSurface.shininess())).mult(Intensity);
+                color = color.add(specular);
+            }
+        }
 
-		//recursive call
-		if(closestSurface.reflectionIntensity() != 0){
-			Ray reflectanceRay = new Ray(minHit.hitPoint,Ops.reflect(ray.direction(),minHit.getNormalToSurface()).normalize());
-			return calcColor(reflectanceRay,recusionLevel-1);
-		}else{
-			//TODO (refractions)
-		}
-		return null;
-		
-	}
-	public boolean isExposed(Light light,Surface closestSurface,Ray rayToLight){
+        if (color.x > 1) {
+            color.x = 1;
+        } else if (color.y > 1) {
+            color.y = 1;
+        } else if (color.z > 1) {
+            color.z = 1;
+        }
+
+        //base case
+        if (recusionLevel == 0) {
+            return color;
+        }
+        Vec normalToSurface = minHit.getNormalToSurface();
+
+        //only reflect, no refract
+        if (!this.getRenderRefarctions()) {
+            if (closestSurface.reflectionIntensity() != 0) {
+                Vec reflectIntensity = new Vec(closestSurface.reflectionIntensity());
+                Ray reflectanceRay = generateReflectedRay(ray,minHit);
+                color = color.add(calcColor(reflectanceRay, recusionLevel - 1)).mult(reflectIntensity);
+                return color;
+            } else {
+                return color;
+            }
+
+         //reflect and refract
+        } else if(this.getRenderRefarctions() == true && this.getRenderReflections() ==true) {
+            if(closestSurface.isTransparent()){
+                Ray refractanceRay = generateRefractedRay(ray, closestSurface, minHit, normalToSurface);
+                Ray reflectanceRay = generateReflectedRay(ray,minHit);
+
+                Vec reflectIntensity = new Vec(closestSurface.reflectionIntensity());
+                Vec refractIntensity = new Vec(closestSurface.refractionIntensity());
+
+                color = color.add(calcColor(refractanceRay, recusionLevel - 1)).mult(refractIntensity);
+                color = color.add(calcColor(reflectanceRay, recusionLevel - 1)).mult(reflectIntensity);
+                return color;
+            }
+        }
+        return color;
+    }
+    private Ray generateReflectedRay(Ray ray, Hit minHit) {
+        Vec reflectDirection = Ops.reflect(ray.direction(), minHit.getNormalToSurface());
+        Ray reflectanceRay = new Ray(minHit.hitPoint,reflectDirection);
+        return reflectanceRay;
+    }
+
+    private Ray generateRefractedRay(Ray ray, Surface closestSurface, Hit minHit, Vec normalToSurface) {
+        double n1 = closestSurface.n1(minHit);
+        double n2 = closestSurface.n2(minHit);
+        Vec u = ray.direction();
+        Vec refractanceVec = Ops.refract(u,normalToSurface,n1,n2);
+        return new Ray(minHit.hitPoint,refractanceVec);
+    }
+
+    public boolean isExposed(Light light,Surface closestSurface,Ray rayToLight){
 		for (Surface surface : surfaces) {
 			if(light.isOccludedBy(surface, rayToLight)){
 				return false;
