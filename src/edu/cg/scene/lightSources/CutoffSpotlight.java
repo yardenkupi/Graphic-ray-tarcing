@@ -60,6 +60,6 @@ public class CutoffSpotlight extends PointLight {
 		{
 			return new Vec(0,0,0);
 		}
-		return super.intensity(hittingPoint, rayToLight).mult(rayToLight.direction.dot(this.direction.mult(-1)));
+		return super.intensity(hittingPoint, rayToLight).mult(rayToLight.direction.dot(Ops.neg(this.direction)));
 	}
 }

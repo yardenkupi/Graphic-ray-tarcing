@@ -221,7 +221,7 @@ public class Scene {
 				Vec diffuse = closestSurface.Kd().mult(minHit.getNormalToSurface().dot(raytoLight.direction)).mult(Intensity);
 				color = color.add(diffuse);
 				Vec V = minHit.hitPoint.sub(ray.source()).normalize();
-				Vec R = Ops.reflect(raytoLight.direction().mult(-1),minHit.getNormalToSurface()).normalize();
+				Vec R = Ops.reflect(Ops.neg( raytoLight.direction()),minHit.getNormalToSurface()).normalize();
 				Vec specular = closestSurface.Ks().mult(Math.pow(V.dot(R),closestSurface.shininess())).mult(Intensity);
 				color = color.add(specular);
 			}

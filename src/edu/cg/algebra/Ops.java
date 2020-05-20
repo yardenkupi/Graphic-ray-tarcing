@@ -107,9 +107,24 @@ public class Ops {
 	 * @return
 	 */
 	public static Vec refract(Vec u, Vec normal, double n1, double n2) {
-		// TODO: Bonus implementation. 
 		// Snell's law: n1*sin(theta1) = n2*sin(theta2)
-		double theta1 =
-		return v2;
+//		throw new UnimplementedMethodException("Ops.refract(Vec, Vec, double, double)");
+		if(n1 == n2) {
+			return u;
+		}
+		double dot = Math.pow(Ops.dot(neg(u), normal),2);
+
+		if(n1 > n2) {
+			double theta = Math.pow(n2 / n1,2);
+			if(1 - dot >= theta)
+				return Ops.reflect(u, normal);
+		}
+		Vec b = normalize(Ops.add(u, mult(dot(neg(u), normal), normal)));
+		double sin2Theta2 = (n1 * n1 * (1-dot)) / (n2*n2);
+		double cos2Theta2 = 1 - sin2Theta2;
+		double sinTheta2 = Math.sqrt(sin2Theta2);
+		double cosTheta2 = Math.sqrt(cos2Theta2);
+		Vec refractedVector = add(mult(-cosTheta2, normal), mult(sinTheta2, b));
+		return refractedVector;
 	}
 }
