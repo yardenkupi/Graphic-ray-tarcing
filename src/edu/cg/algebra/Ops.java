@@ -126,5 +126,6 @@ public class Ops {
 		double cosTheta2 = Math.sqrt(cos2Theta2);
 		Vec refractedVector = add(mult(-cosTheta2, normal), mult(sinTheta2, b));
 		return refractedVector;
+
 	}
 }
