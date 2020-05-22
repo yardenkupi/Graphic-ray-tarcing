@@ -14,7 +14,7 @@ public class CutoffSpotlight extends PointLight {
 
 	public CutoffSpotlight(Vec dirVec, double cutoffAngle) {
 		this.direction = dirVec;
-		this.cutoffAngle = cutoffAngle;
+		this.cutoffAngle = Math.toRadians(cutoffAngle);
 	}
 
 	public CutoffSpotlight initDirection(Vec direction) {
@@ -55,11 +55,11 @@ public class CutoffSpotlight extends PointLight {
 
 	@Override
 	public Vec intensity(Point hittingPoint, Ray rayToLight) {
-		
+
 		if(Math.acos(rayToLight.direction.dot(this.direction.mult(-1))) > this.cutoffAngle)
 		{
 			return new Vec(0,0,0);
 		}
-		return super.intensity(hittingPoint, rayToLight).mult(rayToLight.direction.dot(Ops.neg(this.direction)));
+		return super.intensity(hittingPoint, rayToLight).mult(this.direction.dot(Ops.neg(rayToLight.direction)));
 	}
 }

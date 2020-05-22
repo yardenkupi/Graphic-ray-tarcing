@@ -8,7 +8,7 @@ public class Hit implements Comparable<Hit> {
 
 	private boolean isWithin = false;
 	private Surface surface = null;
-	public Point hitPoint = null;
+	public transient Point hitPoint = null;
 
 	public Hit(double t, Vec normalToSurface) {
 		this.t = t;

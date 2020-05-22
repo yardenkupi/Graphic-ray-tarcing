@@ -174,17 +174,14 @@ public class Scene {
 			Point centerPoint = camera.transform(x, y);
 			
 			Ray ray = new Ray(camera.getCameraPosition(), centerPoint);
-			Vec color = calcColor(ray, 0);
-//			if(color.x != 0.0)
-//			{
-////				System.out.print("Hit: (" + x + ","+ y + ")");
-////				System.out.println(" ");
-//			}
-//			if(x%100 == 0 && y%100 == 0)
-//			{
-////				System.out.print("(" + x + ","+ y + ")");
-////				System.out.println(" ");
-//			}
+			Vec color = calcColor(ray, this.maxRecursionLevel);
+            if (color.x > 1) {
+                color.x = 1;
+            } else if (color.y > 1) {
+                color.y = 1;
+            } else if (color.z > 1) {
+                color.z = 1;
+            }
 			return color.toColor();
 		});
 	}
@@ -224,53 +221,35 @@ public class Scene {
                 Vec diffuse = closestSurface.Kd().mult(minHit.getNormalToSurface().dot(raytoLight.direction)).mult(Intensity);
                 color = color.add(diffuse);
                 Vec V = minHit.hitPoint.sub(ray.source()).normalize();
-                Vec R = Ops.reflect(Ops.neg(raytoLight.direction()), minHit.getNormalToSurface()).normalize();
+                Vec R = Ops.reflect(Ops.neg(raytoLight.direction()), minHit.getNormalToSurface());
                 Vec specular = closestSurface.Ks().mult(Math.pow(V.dot(R), closestSurface.shininess())).mult(Intensity);
                 color = color.add(specular);
             }
         }
 
-        if (color.x > 1) {
-            color.x = 1;
-        } else if (color.y > 1) {
-            color.y = 1;
-        } else if (color.z > 1) {
-            color.z = 1;
-        }
 
         //base case
         if (recusionLevel == 0) {
             return color;
         }
         Vec normalToSurface = minHit.getNormalToSurface();
+        //reflect
+        if (this.getRenderReflections() && closestSurface.reflectionIntensity() != 0) {
 
-        //only reflect, no refract
-        if (!this.getRenderRefarctions()) {
-            if (closestSurface.reflectionIntensity() != 0) {
-                Vec reflectIntensity = new Vec(closestSurface.reflectionIntensity());
-                Ray reflectanceRay = generateReflectedRay(ray,minHit);
+                double reflectIntensity = (closestSurface.reflectionIntensity());
+                Ray reflectanceRay = generateReflectedRay(ray, minHit);
                 color = color.add(calcColor(reflectanceRay, recusionLevel - 1)).mult(reflectIntensity);
-                return color;
-            } else {
-                return color;
-            }
 
-         //reflect and refract
-        } else if(this.getRenderRefarctions() == true && this.getRenderReflections() ==true) {
-            if(closestSurface.isTransparent()){
+        }
+         //refract
+         if(this.getRenderRefarctions()&& closestSurface.isTransparent() &&closestSurface.refractionIntensity() != 0) {
                 Ray refractanceRay = generateRefractedRay(ray, closestSurface, minHit, normalToSurface);
-                Ray reflectanceRay = generateReflectedRay(ray,minHit);
-
-                Vec reflectIntensity = new Vec(closestSurface.reflectionIntensity());
-                Vec refractIntensity = new Vec(closestSurface.refractionIntensity());
-
+                double refractIntensity = (closestSurface.refractionIntensity());
                 color = color.add(calcColor(refractanceRay, recusionLevel - 1)).mult(refractIntensity);
-                color = color.add(calcColor(reflectanceRay, recusionLevel - 1)).mult(reflectIntensity);
-                return color;
-            }
         }
         return color;
     }
+
     private Ray generateReflectedRay(Ray ray, Hit minHit) {
         Vec reflectDirection = Ops.reflect(ray.direction(), minHit.getNormalToSurface());
         Ray reflectanceRay = new Ray(minHit.hitPoint,reflectDirection);

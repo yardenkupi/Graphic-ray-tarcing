@@ -8,7 +8,7 @@ import edu.cg.algebra.Ray;
 import edu.cg.algebra.Vec;
 
 public class Sphere extends Shape {
-	private Point center;
+	Point center;
 	double radius;
 	
 	public Sphere(Point center, double radius) {

@@ -13,7 +13,7 @@ import edu.cg.algebra.Vec;
  */
 public class Plain extends Shape {
 	// implicit form of a plain: ax + by + cz + d = 0;
-	private double a, b, c, d;
+	double a, b, c, d;
 
 	private transient Vec normal = null;
 

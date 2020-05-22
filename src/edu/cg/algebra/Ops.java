@@ -113,7 +113,6 @@ public class Ops {
 			return u;
 		}
 		double dot = Math.pow(Ops.dot(neg(u), normal),2);
-
 		if(n1 > n2) {
 			double theta = Math.pow(n2 / n1,2);
 			if(1 - dot >= theta)
@@ -126,6 +125,5 @@ public class Ops {
 		double cosTheta2 = Math.sqrt(cos2Theta2);
 		Vec refractedVector = add(mult(-cosTheta2, normal), mult(sinTheta2, b));
 		return refractedVector;
-
 	}
 }

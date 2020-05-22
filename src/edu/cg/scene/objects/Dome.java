@@ -34,16 +34,22 @@ public class Dome extends Shape {
 		Hit sphareHit = this.sphere.intersect(ray);
 		Hit planeHit = this.plain.intersect(ray);
 		
-		if(sphareHit == null)
+		if(sphareHit == null )
 		{
 			return null;
 		}
-		if(planeHit == null)
-		{
+
+		//check if hit the surface from the dome side, if so return the sphere hit, else the sphere.
+		double findSideOfSphere = plain.substitute(sphareHit.hitPoint);
+		//check if hit the surface from the dome side, if so return the sphere hit, else the sphere.
+		if(findSideOfSphere >= 0)
 			return sphareHit;
+		if(planeHit == null){
+			return null;
 		}
-		//check if hit the surface from the dome side, if so return the sphare hit, else the spare.
-		return planeHit.getNormalToSurface().dot(plain.normal()) >= 0 ? sphareHit : planeHit;
+		double findSideOfPlain = Math.pow(planeHit.hitPoint.x - sphere.center.x,2) + Math.pow(planeHit.hitPoint.y - sphere.center.y,2)+Math.pow(planeHit.hitPoint.z - sphere.center.z,2) - Math.pow(sphere.radius,2);
+
+		return findSideOfPlain  <= 0 ? planeHit: null;
 	}
 	
 	@Override

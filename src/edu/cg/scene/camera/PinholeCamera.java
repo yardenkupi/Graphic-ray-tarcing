@@ -52,9 +52,9 @@ public class PinholeCamera {
 		this.height = (double)height;
 		this.width = (double)width;
 		this.viewAngle = viewAngle;
-		double screenWidth = (double) (Math.tan(viewAngle/2.0) * this.distanceToPlain * 2.0);
+		double screenWidth = Math.toRadians((viewAngle/2.0)) * this.distanceToPlain * 2.0;
 		double Width = (double)width;
-		double Screenwidth = (double)screenWidth;
+		double Screenwidth = screenWidth;
         this.pixelWidth = Screenwidth / Width;
 	}
 
