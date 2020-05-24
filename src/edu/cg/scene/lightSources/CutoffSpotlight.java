@@ -53,8 +53,14 @@ public class CutoffSpotlight extends PointLight {
 		return super.isOccludedBy(surface,rayToLight);
 	}
 
+
+	/**
+	 * Create the angle between the vectors by the dot product of the negation of the rays direction and
+	 * @return color vector of the currents intensity
+	 */
 	@Override
 	public Vec intensity(Point hittingPoint, Ray rayToLight) {
+
 
 		if(Math.acos(rayToLight.direction.dot(this.direction.mult(-1))) > this.cutoffAngle)
 		{

@@ -25,7 +25,11 @@ public class Triangle extends Shape {
     @Override
     public String toString() {
         String endl = System.lineSeparator();
-        return "Triangle: p1 = " + p1.toString() + ", p2 = " + p2.toString() + ", p3 = " + p3.toString() + ", plain = " + trianglePlain.toString() + endl;
+        return "Triangle:" + endl +
+                "P1: " + p1 + endl +
+                "P2: " + p2 + endl +
+                "P3: " + p2 + endl +
+                "trianglePlain: " + trianglePlain + endl;
     }
 
     public synchronized Vec normal() {
@@ -39,6 +43,7 @@ public class Triangle extends Shape {
 
     /**
      * Returns the ray intersection with the plain if exists, and null otherwise.
+     * Done using trigonometric rules shown in class
      */
     @Override
     public Hit intersect(Ray ray) {

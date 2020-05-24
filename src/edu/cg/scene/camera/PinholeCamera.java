@@ -13,8 +13,8 @@ public class PinholeCamera {
 	private double distanceToPlain;
 
 	private Point Center;
-	public double height;
-	public double width;
+	private double height;
+	private double width;
 	private double viewAngle;
 	private double pixelWidth;
 	
@@ -35,8 +35,8 @@ public class PinholeCamera {
 		this.towardsVec = towardsVec.normalize();
 		this.cameraPosition = cameraPosition;
 
-		this.rightVec = (towardsVec.cross(upVec)).normalize();
-		this.upVec = (this.rightVec.cross(towardsVec)).normalize();
+		this.setRightVec((towardsVec.cross(upVec)).normalize());
+		this.setUpVec((this.getRightVec().cross(towardsVec)).normalize());
 		this.distanceToPlain = distanceToPlain;
 		this.Center = cameraPosition.add(this.towardsVec.mult(distanceToPlain));
 	}
@@ -52,10 +52,10 @@ public class PinholeCamera {
 		this.height = (double)height;
 		this.width = (double)width;
 		this.viewAngle = viewAngle;
-		double screenWidth = Math.toRadians((viewAngle/2.0)) * this.distanceToPlain * 2.0;
+		double screenWidth = Math.tan(Math.toRadians(viewAngle/2.0)) * this.distanceToPlain * 2.0;
 		double Width = (double)width;
 		double Screenwidth = screenWidth;
-        this.pixelWidth = Screenwidth / Width;
+        this.setPixelWidth(Screenwidth / Width);
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class PinholeCamera {
 	 * @return the middle point of the pixel (x,y) in the model coordinates.
 	 */
 	public Point transform(int x, int y) {
-		Point P = this.Center.add(rightVec.mult((x - Math.floor(width/2.0))*pixelWidth)).add(upVec.mult(((0.0 - y) + Math.floor(height/2.0))*pixelWidth));
+		Point P = this.Center.add(getRightVec().mult((x - Math.floor(width/2.0))*getPixelWidth())).add(getUpVec().mult(((0.0 - y) + Math.floor(height/2.0))*getPixelWidth()));
 		return P;
 	}
 
@@ -78,5 +78,29 @@ public class PinholeCamera {
 	 */
 	public Point getCameraPosition() {
 		return cameraPosition;
+	}
+
+	public double getPixelWidth() {
+		return pixelWidth;
+	}
+
+	public void setPixelWidth(double pixelWidth) {
+		this.pixelWidth = pixelWidth;
+	}
+
+	public Vec getRightVec() {
+		return rightVec;
+	}
+
+	public void setRightVec(Vec rightVec) {
+		this.rightVec = rightVec;
+	}
+
+	public Vec getUpVec() {
+		return upVec;
+	}
+
+	public void setUpVec(Vec upVec) {
+		this.upVec = upVec;
 	}
 }

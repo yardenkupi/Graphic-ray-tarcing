@@ -44,7 +44,7 @@ public class ScenesCreator extends JPanel {
 		btnCreate.addActionListener(e -> {
 			try {
 				if(!checkSceneNum())
-					throw new IllegalArgumentException("The scnene number must be a positive integer.");
+					throw new IllegalArgumentException("The scene number must be a positive integer.");
 
 				int sceneNum = (Integer)sceneNumTextField.getValue();
 				String sceneName = "scene" + sceneNum;

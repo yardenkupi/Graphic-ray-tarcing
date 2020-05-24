@@ -2,6 +2,7 @@ package edu.cg.scene;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -120,10 +121,6 @@ public class Scene {
 
 	private void initSomeFields(int imgWidth, int imgHeight, Logger logger) {
 		this.logger = logger;
-		// TODO: initialize your additional field here.
-		//DONT FORGET TO ADD THEM AS: private transient Object aField
-		
-		
 	}
 
 	public BufferedImage render(int imgWidth, int imgHeight, double viewAngle, Logger logger)
@@ -172,9 +169,29 @@ public class Scene {
 		return executor.submit(() -> {
 
 			Point centerPoint = camera.transform(x, y);
+			int numberOfSuxPix = (int)Math.pow(antiAliasingFactor, 2);
+			Vec color = new Vec(0,0,0);
 			
-			Ray ray = new Ray(camera.getCameraPosition(), centerPoint);
-			Vec color = calcColor(ray, this.maxRecursionLevel);
+			for(int i = 0; i < antiAliasingFactor; i++)
+			{
+				for(int j = 0; j < antiAliasingFactor; j++)
+				{
+					double moveRight = j - (antiAliasingFactor / 2);
+					if (moveRight >= 0 && antiAliasingFactor % 2 == 0)
+						moveRight++;
+					moveRight = moveRight / (antiAliasingFactor + 1);
+					
+					double moveUp = i - (antiAliasingFactor / 2);
+					if (moveUp >= 0 && antiAliasingFactor % 2 == 0)
+						moveUp++;
+					moveUp = moveUp / (antiAliasingFactor + 1);
+					
+					centerPoint = centerPoint.add(camera.getUpVec().mult(moveUp * camera.getPixelWidth())).add(camera.getRightVec().mult(moveRight * camera.getPixelWidth()));
+					Ray ray = new Ray(camera.getCameraPosition(), centerPoint);
+					color = color.add(calcColor(ray, this.maxRecursionLevel));
+				}
+			}
+			color = color.mult(1.0/(double)numberOfSuxPix);
             if (color.x > 1) {
                 color.x = 1;
             } else if (color.y > 1) {
@@ -186,20 +203,24 @@ public class Scene {
 		});
 	}
 
+
+	/**
+	 * calculate the color for the provided ray shot from the camera, and shoots the refelcted and refracted rays according to the surface hit
+	 * @param ray - the source ray.
+	 * @param recusionLevel - current recursion level
+	 * @return vector of colors (RGB)
+	 */
 	private Vec calcColor(Ray ray, int recusionLevel) {
+
         // This is the recursive method in RayTracing.
         Vec color = new Vec(0, 0, 0);
         Surface closestSurface = null;
         Hit minHit = new Hit(Integer.MAX_VALUE, new Vec(0, 0, 0));
 
         //check which is the closest surface to be hit
-
         for (Surface surface : surfaces) {
             Hit hit = surface.intersect(ray);
             if (hit != null) {
-                if (count == 4196) {
-                    int i = 0;
-                }
                 if (hit.compareTo(minHit) < 0 && hit.t > 0) {
                     closestSurface = surface;
                     minHit = hit;
@@ -213,10 +234,10 @@ public class Scene {
 
         color = closestSurface.Ka().mult(ambient);
 
-        //for loop over light sources to check if they hit chosen surface and calc ray tracing
+        //loop over light sources to check if they hit chosen surface and calc ray tracing
         for (Light light : lightSources) {
             Ray raytoLight = light.rayToLight(minHit.hitPoint);
-            if (minHit.getNormalToSurface().dot(raytoLight.direction()) > 0 && isExposed(light, closestSurface, raytoLight)) {
+            if (minHit.getNormalToSurface().dot(raytoLight.direction()) > 0 && isExposed(light, raytoLight)) {
                 Vec Intensity = light.intensity(minHit.hitPoint, raytoLight);
                 Vec diffuse = closestSurface.Kd().mult(minHit.getNormalToSurface().dot(raytoLight.direction)).mult(Intensity);
                 color = color.add(diffuse);
@@ -238,11 +259,11 @@ public class Scene {
 
                 double reflectIntensity = (closestSurface.reflectionIntensity());
                 Ray reflectanceRay = generateReflectedRay(ray, minHit);
-                color = color.add(calcColor(reflectanceRay, recusionLevel - 1)).mult(reflectIntensity);
+                color = color.add(calcColor(reflectanceRay, recusionLevel - 1).mult(reflectIntensity));
 
         }
          //refract
-         if(this.getRenderRefarctions()&& closestSurface.isTransparent() &&closestSurface.refractionIntensity() != 0) {
+         if(this.getRenderRefarctions() && closestSurface.isTransparent() &&closestSurface.refractionIntensity() != 0) {
                 Ray refractanceRay = generateRefractedRay(ray, closestSurface, minHit, normalToSurface);
                 double refractIntensity = (closestSurface.refractionIntensity());
                 color = color.add(calcColor(refractanceRay, recusionLevel - 1)).mult(refractIntensity);
@@ -250,12 +271,30 @@ public class Scene {
         return color;
     }
 
+
+
+	/**
+	 * calculate the reflected ray using the normal to the surface of the hitting point and the direction of the ray
+	 *
+	 * @param ray - the source ray.
+	 * @param minHit - hitting point with the surface
+	 * @return reflecte ray
+	 */
     private Ray generateReflectedRay(Ray ray, Hit minHit) {
         Vec reflectDirection = Ops.reflect(ray.direction(), minHit.getNormalToSurface());
         Ray reflectanceRay = new Ray(minHit.hitPoint,reflectDirection);
         return reflectanceRay;
     }
 
+
+	/**
+	 * calculate the refracted ray using the normal to the surface of the hitting point and the direction of the ray
+	 *
+	 * @param ray - the source ray.
+	 * @param minHit - hitting point with the surface
+	 * @param closestSurface - surface hit by ray
+	 * @return refracted ray
+	 */
     private Ray generateRefractedRay(Ray ray, Surface closestSurface, Hit minHit, Vec normalToSurface) {
         double n1 = closestSurface.n1(minHit);
         double n2 = closestSurface.n2(minHit);
@@ -264,29 +303,23 @@ public class Scene {
         return new Ray(minHit.hitPoint,refractanceVec);
     }
 
-    public boolean isExposed(Light light,Surface closestSurface,Ray rayToLight){
+
+	/**
+	 * calculates for the given ray if it 'blocks' any other surface and thus a shadow effect is created
+	 *
+	 * @param light - light source we check
+	 * @param rayToLight  - ray hitting target
+
+	 * @return true if it is exposed and false otherwise
+	 */
+    public boolean isExposed(Light light,Ray rayToLight){
 		for (Surface surface : surfaces) {
 			if(light.isOccludedBy(surface, rayToLight)){
 				return false;
-			}else{
-				int x = 9;
 			}
 		}
 		return true;
 	}
 
-	public Hit closestSurface(Ray ray){
-		Hit minHit = null;
-		Surface closestSurface = null;
-		for	(Surface surface : surfaces) {
-			Hit hit = surface.intersect(ray);
-			if(hit != null){
-				if(hit.t < minHit.t && hit.t > 0){
-					closestSurface = surface;
-					minHit = hit;
-				}
-			}
-		}
-		return minHit; //TODO 
-	}
+
 }
